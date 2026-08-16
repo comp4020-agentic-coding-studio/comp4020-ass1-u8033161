@@ -3,21 +3,77 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>COMP4020 prototype</title>
+    <title>The Monty Hall Problem — COMP4020</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <header>
+    <header class="page-header">
       <nav aria-label="Primary">
         <a href="./">Home</a>
       </nav>
+      <h1>The Monty Hall Problem</h1>
+      <p>Pick a door. One has a car behind it, the other two have goats.</p>
     </header>
+
     <main>
-      <h1>COMP4020 prototype</h1>
-      <p data-testid="intro">
-        Replace this with your prototype. This week's brief is on the course website;
-        <code>spec/README.md</code> explains how the checks in this repo relate to it.
-      </p>
+      <section class="game" aria-labelledby="game-heading">
+        <h2 id="game-heading" class="visually-hidden">Game</h2>
+
+        <div class="doors" id="doors">
+          <button class="door" id="door-0" data-index="0" aria-label="Door 1">
+            <span class="door-face" aria-hidden="true">🚪</span>
+            <span class="door-label">Door 1</span>
+          </button>
+          <button class="door" id="door-1" data-index="1" aria-label="Door 2">
+            <span class="door-face" aria-hidden="true">🚪</span>
+            <span class="door-label">Door 2</span>
+          </button>
+          <button class="door" id="door-2" data-index="2" aria-label="Door 3">
+            <span class="door-face" aria-hidden="true">🚪</span>
+            <span class="door-label">Door 3</span>
+          </button>
+        </div>
+
+        <p id="message" class="message" role="status" aria-live="polite">Pick a door to begin.</p>
+
+        <div class="actions" id="decision-actions" hidden>
+          <button type="button" id="stay-btn"></button>
+          <button type="button" id="switch-btn"></button>
+        </div>
+
+        <div class="actions" id="result-actions" hidden>
+          <button type="button" id="play-again-btn">Play again</button>
+        </div>
+      </section>
+
+      <section class="stats" aria-labelledby="stats-heading">
+        <h2 id="stats-heading">Running win rate</h2>
+        <div class="stat-row">
+          <div class="stat" id="stat-switch">
+            <span class="stat-name">Switchers</span>
+            <span class="stat-value" id="switch-value">0 / 0 &mdash; &ndash;</span>
+            <div class="stat-bar"><div class="stat-fill" id="switch-fill"></div></div>
+          </div>
+          <div class="stat" id="stat-stay">
+            <span class="stat-name">Stayers</span>
+            <span class="stat-value" id="stay-value">0 / 0 &mdash; &ndash;</span>
+            <div class="stat-bar"><div class="stat-fill" id="stay-fill"></div></div>
+          </div>
+        </div>
+
+        <button type="button" id="simulate-btn">Simulate 100 rounds instantly</button>
+      </section>
+
+      <details class="reveal">
+        <summary>Curious why the numbers land where they do?</summary>
+        <p>
+          When you first pick, there's a 1 in 3 chance you picked the car and a 2 in 3 chance the
+          car is behind one of the other two doors. The host always opens a door with a goat
+          &mdash; that doesn't change where the car actually is, but it does concentrate that
+          2-in-3 chance onto the one remaining unopened door. Switching lets you take that 2-in-3
+          door instead of your original 1-in-3 pick.
+        </p>
+      </details>
     </main>
     <script type="module" src="./main.ts"></script>
   </body>

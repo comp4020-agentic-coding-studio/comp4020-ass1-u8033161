@@ -1,16 +1,297 @@
+:root {
+  --bg: #f7f6f3;
+  --ink: #1e1b16;
+  --door-bg: #6b4226;
+  --door-bg-hover: #7d4f2d;
+  --accent-switch: #2563eb;
+  --accent-stay: #d97706;
+  --win: #15803d;
+  --lose: #b91c1c;
+  --focus: #1d4ed8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  padding: 2rem;
-  font-family: system-ui, sans-serif;
-  line-height: 1.6;
-  color: #1a1a1a;
+  padding: 1.5rem;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
 }
 
 main {
-  max-width: 40rem;
+  max-width: 640px;
   margin: 0 auto;
 }
 
 a {
-  color: #0b5fff;
+  color: var(--accent-switch);
+}
+
+.page-header {
+  max-width: 640px;
+  margin: 0 auto 1.5rem;
+  text-align: center;
+}
+
+.page-header nav {
+  margin-bottom: 0.5rem;
+}
+
+.page-header h1 {
+  margin-bottom: 0.25rem;
+  font-size: 1.75rem;
+}
+
+.page-header p {
+  margin: 0;
+  color: #4b4740;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.game {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.doors {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: nowrap;
+}
+
+.door {
+  flex: 1 1 0;
+  max-width: 160px;
+  min-width: 90px;
+  aspect-ratio: 3 / 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--door-bg);
+  color: #fff;
+  border: 3px solid transparent;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font: inherit;
+  padding: 0.5rem;
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.door:disabled {
+  cursor: default;
+}
+
+.door:hover:not(:disabled) {
+  background: var(--door-bg-hover);
+}
+
+.door.is-picked {
+  border-color: var(--accent-switch);
+}
+
+.door.is-host-revealed {
+  background: #9ca3af;
+  opacity: 0.85;
+}
+
+.door.is-final-car {
+  background: var(--win);
+  border-color: var(--win);
+}
+
+.door.is-final-goat {
+  background: #4b4740;
+}
+
+.door-face {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.door-label {
+  font-size: 0.85rem;
+}
+
+.message {
+  min-height: 1.5em;
+  font-size: 1.05rem;
+  margin: 0 0 1rem;
+}
+
+.actions[hidden] {
+  display: none;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+button {
+  font: inherit;
+}
+
+#stay-btn,
+#switch-btn,
+#play-again-btn,
+#simulate-btn {
+  padding: 0.65rem 1.25rem;
+  border-radius: 0.4rem;
+  border: 2px solid transparent;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+#stay-btn {
+  background: var(--accent-stay);
+  color: #fff;
+}
+
+#switch-btn {
+  background: var(--accent-switch);
+  color: #fff;
+}
+
+#play-again-btn {
+  background: var(--ink);
+  color: #fff;
+}
+
+.stats {
+  border-top: 1px solid #ddd8d0;
+  padding-top: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.stats h2 {
+  font-size: 1.1rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.stat-row {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.stat {
+  flex: 1;
+  text-align: center;
+}
+
+.stat-name {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  display: block;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 0.4rem;
+}
+
+.stat-bar {
+  height: 0.6rem;
+  background: #e5e1d8;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.stat-fill {
+  height: 100%;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+#switch-fill {
+  background: var(--accent-switch);
+}
+
+#stay-fill {
+  background: var(--accent-stay);
+}
+
+#simulate-btn {
+  display: block;
+  margin: 0 auto;
+  background: #fff;
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.reveal {
+  max-width: 640px;
+  margin: 0 auto;
+  color: #4b4740;
+}
+
+.reveal summary {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (width <= 480px) {
+  body {
+    padding: 1rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .doors {
+    gap: 0.5rem;
+  }
+
+  .door {
+    min-width: 0;
+    padding: 0.35rem;
+  }
+
+  .door-face {
+    font-size: 1.9rem;
+  }
+
+  .door-label {
+    font-size: 0.7rem;
+  }
+
+  .stat-row {
+    gap: 0.75rem;
+  }
+
+  #stay-btn,
+  #switch-btn,
+  #play-again-btn,
+  #simulate-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+  }
 }
