@@ -1,83 +1,55 @@
 # Process overview
 
-<!-- TEMPLATE: this file is a shape to fill in, not a form. Replace everything
-     in it with your own overview, and delete this comment — `pnpm
-     check:evidence` will remind you if it's still here. -->
-
 A reading-guide to how the work came together --- a map to your process, not an
-essay about it. Markers read this file and follow its citations; they don't
-trawl the repo for evidence you didn't point at, so if a moment mattered, cite
-it.
-
-This file is the shape; the course site's
-[assessment page](https://comp.anu.edu.au/courses/comp4020-agentic-coding-studio/topics/assessment/#what-you-submit)
-is the requirement, and each brief adds its own word count and moment count.
+essay about it.
 
 ## What I built
 
-One paragraph: the thing, and the idea behind it.
+An interactive explainer for the Monty Hall problem: the visitor picks one of
+three doors, the host reveals a goat behind another, and the visitor chooses to
+switch or stay. Rather than being told switching wins 2/3 of the time, they see
+it: wins are tallied separately for "switchers" and "stayers" as running,
+side-by-side win-rate bars, and a "simulate 100 rounds instantly" button makes
+the gap undeniable even without playing dozens of rounds by hand.
 
 ## The moments that mattered
 
-Three or four for an assignment; fewer is fine for a weekly prototype. Keep the
-list short so each moment has room to do all four jobs:
+1. **Adapting into the provisioned template instead of replacing its tooling.**
+   The game was first built and fully verified (both viewports, keyboard nav,
+   the simulate button) as a from-scratch static HTML/CSS/JS project, before it
+   was clear that this course's assignment-1 repo already existed with a
+   Vite+TypeScript template already provisioned. The obvious shortcut was to
+   drop the plain JS/CSS/HTML in as-is and discard the build tooling; instead
+   the game was ported into `main.ts` with real types (`Phase`, `Occupant`,
+   a `getEl<T>` helper instead of scattering non-null assertions), so
+   `pnpm check`/`build`/`lint` keep working exactly as the template's CI
+   expects, rather than becoming dead scripts nobody runs. I knew it was right
+   once `pnpm check` chained typecheck, build, oxlint, stylelint, and all 15
+   vitest tests (the shipped invariants plus the evidence check) to green
+   against the ported code, with no `pnpm` script left unused
+   ([`08b17bb`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-u8033161/commit/08b17bb)).
 
-1. **what happened** --- the problem, or the thing the agent got wrong
-2. **what you did instead of the obvious thing** --- the call you made, and why
-   it beat the obvious one
-3. **how you knew it was right** --- the check you ran, the viewport you looked
-   at, what you read before accepting the diff
-4. **the citation** --- a commit or commit range, a `CLAUDE.md` change, a check
-   that went from red to green, a prompt paired with the commit it produced
+2. **Fixing the `stylelint-config-standard` errors the template caught that the
+   from-scratch build never saw** --- a deprecated `clip: rect(...)` (replaced
+   with `clip-path: inset(50%)` for the visually-hidden heading), descending
+   specificity between `.door:disabled` and `.door:hover:not(:disabled)`
+   (reordered), and a plain `max-width: 480px` media query where this config
+   wants range syntax (`width <= 480px`). None of these were visible by looking
+   at the rendered page --- they only surfaced once the real template's lint
+   config ran against the ported CSS, which is exactly what running the
+   template's own checks early was for
+   ([`08b17bb`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-u8033161/commit/08b17bb)).
 
-Jobs 2 and 3 are the ones the repo can't tell a reader on its own, so they're
-where the marks are. The strongest moments are the ones where a correction
-landed in the **harness** rather than in another prompt --- a rule added to
-`CLAUDE.md`, a check wired up, an attempt thrown away: re-prompting until it
-passes is the routine case, and changing what the agent works against is the
-skilled one.
-
-Cite each moment as a link whose text is the commit hash or range and whose
-target is this repo's commit or compare URL, so a reader clicks straight to the
-evidence:
-
-- one commit: [`a1b2c3d`](https://github.com/YOUR-ORG/YOUR-REPO/commit/a1b2c3d)
-- a range:
-  [`a1b2c3d...e4f5a6b`](https://github.com/YOUR-ORG/YOUR-REPO/compare/a1b2c3d...e4f5a6b)
-
-To pair a prompt with the commit it produced, quote the prompt (curated, not a
-full transcript) next to the citation:
-
-> the prompt, verbatim
-
-Screenshots are welcome where one carries the verification better than a
-sentence does. Commit the file to this repo and link it with a **relative**
-path, which is what makes it render on GitHub: `![alt text](docs/before.png)`.
-Images don't count towards the word count and don't replace the citation.
-
-### A worked moment, for shape
-
-Delete this section along with the rest of the boilerplate --- it's here to show
-the four jobs in one paragraph, not to be imitated in content.
-
-> The date formatter kept coming back with `toLocaleDateString()` and no locale
-> argument, so the same build rendered differently on my machine and in CI. I'd
-> already re-prompted it twice, which fixed the line but not the habit, so the
-> third time I put the rule in `CLAUDE.md` instead
-> ([`3f9ac21`](https://github.com/YOUR-ORG/YOUR-REPO/commit/3f9ac21)) and added
-> a spec test that fails on a bare `toLocaleDateString`. That's what told me it
-> had actually taken: the test went red against the old code and green against
-> the new, and the next two features it wrote passed it without prompting
-> ([`3f9ac21...b7e0d14`](https://github.com/YOUR-ORG/YOUR-REPO/compare/3f9ac21...b7e0d14)).
-
-## Before you ship
-
-`pnpm check:evidence` verifies your citations resolve to real commits, that the
-current reflection entry is in `reflections/`, and that your `CLAUDE.md` is
-there --- before a marker ever opens the file. It checks that your map is
-traceable, not that it is good: the marker judges whether your small,
-deliberately chosen set of moments shows real judgement and reflection. A green
-check is not a substitute for that curation.
-
-Images are deliberately not checked, because whether one renders is visible the
-moment you look. Open this file on GitHub and look at it before you ship.
+3. **Turning a CSS bug into a standing harness rule, not just a fix.** During
+   the original build, the stay/switch/play-again buttons stayed visible on
+   load despite `hidden` being set correctly in the markup. The cause: an
+   author rule like `.actions { display: flex }` beats the browser's built-in
+   `[hidden] { display: none }` regardless of selector specificity, because
+   author-stylesheet rules always win over user-agent rules. Re-prompting
+   would have fixed that one instance; instead the rule
+   (`.your-class[hidden] { display: none; }` alongside any class that styles a
+   `hidden`-toggled element) was written into this repo's `CLAUDE.md` so it
+   applies to every element toggled this way going forward, not just the ones
+   already caught. Verified by screenshotting the rendered page and reading
+   `getComputedStyle(...).display`, not by re-reading the source
+   ([`cba6d59`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-u8033161/commit/cba6d59)).
