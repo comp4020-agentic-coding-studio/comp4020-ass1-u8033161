@@ -160,3 +160,34 @@ catching you out, a fact about the stack the agent keeps getting wrong --- write
 it down here. Growing this file is the work of harness engineering, and the gap
 between this boilerplate and your own version is part of what your prototype
 says about the developer you're becoming.
+
+## This prototype: the Monty Hall problem
+
+An interactive explainer where the visitor discovers, by playing, that
+switching doors wins 2/3 of the time --- they are not told this upfront. Core
+interaction: pick 1 of 3 doors, the host reveals a goat behind another door,
+the visitor chooses to switch or stay, and the result is recorded into a
+running win-rate shown **separately** for switchers and stayers so the gap
+becomes visually obvious after a few rounds. A "simulate 100 rounds instantly"
+button makes the pattern undeniable even for an impatient visitor.
+
+Rules on top of the template's:
+
+- Must work at two viewports: desktop (1440px) and phone (390px).
+- Must degrade gracefully with keyboard-only navigation.
+- Core interaction must be testable: state it in one sentence before building.
+- Prefer small, verifiable commits over one giant commit.
+- When you fix something, prefer fixing the root cause / adding a check, not
+  just retrying until it looks right. Note any such fix below as a rule if it
+  should apply going forward.
+- Do not add scope beyond the one core mechanic without asking first.
+
+### Notes from fixes
+
+- A class selector styling an element (e.g. `.actions { display: flex }`)
+  silently overrides the browser's built-in `[hidden] { display: none }` rule,
+  because author-stylesheet rules beat user-agent rules regardless of
+  specificity. Any element toggled via the `hidden` attribute needs an
+  explicit `.your-class[hidden] { display: none; }` rule alongside it. Caught
+  by screenshotting the rendered page, not by reading the code --- stay/switch/
+  play-again buttons were showing on load despite `hidden` in the markup.
